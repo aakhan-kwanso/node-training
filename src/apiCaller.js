@@ -1,8 +1,8 @@
+//@ts-check
+
 import rpn from "request-promise-native";
 
-function apiCaller(
-  { method, payload, url } = { method: "GET", payload: null }
-) {
+function apiCaller({ method = "GET", payload = null, url = "" }) {
   let options = {
     uri: url,
     headers: {
@@ -18,9 +18,7 @@ function apiCaller(
 
   return rpn(options)
     .then(resp => resp)
-    .catch(error => {
-      return error;
-    });
+    .catch(error => error);
 }
 
 export default apiCaller;

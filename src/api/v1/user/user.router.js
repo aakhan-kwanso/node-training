@@ -1,9 +1,9 @@
 //@ts-check
 import { Router } from "express";
-import commentsController from "./comment.controller";
+import * as userController from "./user.controller";
 
 const router = Router();
 
-router.get("/", commentsController.get);
+router.get("/", userController.get);
 
 export default router;
