@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 import { Router } from "express";
 import * as postController from "./post.controller";
 

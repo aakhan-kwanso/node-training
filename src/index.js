@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 import express from "express";
 import { json, urlencoded } from "body-parser";
 import morgan from "morgan";
@@ -13,7 +13,7 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-//Routes
+// Routes
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
 app.use("/comments", commentRouter);

@@ -1,5 +1,6 @@
 import apiCaller from "../../../apiCaller";
 
+// eslint-disable-next-line
 export async function get(req, resp) {
   try {
     const result = await apiCaller({

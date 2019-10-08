@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 import apiCaller from "../../../apiCaller";
 
 const baseUrl = "https://jsonplaceholder.typicode.com/posts";
@@ -78,7 +78,6 @@ export async function getPostsWithComments(req, resp) {
       resp.status(200).json(result);
     })
     .catch(error => {
-      console.log(error);
       resp.status(404).json(error);
     });
 }
