@@ -1,11 +1,13 @@
 // @ts-check
 import { Router } from 'express';
-import {
-  getPosts,
+import postController from './post.controller';
+
+const {
   deletePosts,
+  getPosts,
   getCommentsForPost,
   getPostsWithComments
-} from './post.controller';
+} = postController;
 
 const router = Router();
 

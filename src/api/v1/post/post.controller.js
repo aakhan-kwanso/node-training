@@ -1,83 +1,90 @@
 // @ts-check
 import apiCaller from '../../../apiCaller';
+import BASE_URL from '../../../config';
 
-// Use hoisting to export all the functions from the same place for readiblity.
-const baseUrl = 'https://jsonplaceholder.typicode.com/posts';
+/* eslint no-use-before-define: 0 */
+export default {
+  deletePosts,
+  getPosts,
+  getCommentsForPost,
+  getPostsWithComments
+};
 
-// Use proper and meaningful function names
-export async function getPosts(req, resp) {
+async function getPosts(req, resp) {
   try {
-    let posts = await apiCaller({ url: baseUrl });
-    if (Object.keys(req.query).length !== 0) {
-      const { title, body, sort } = req.query;
-      if (title || body)
-        posts = posts.filter(
-          post => post.title.includes(title) || post.body.includes(body)
-        );
-      if (sort) {
-        posts.sort((post1, post2) => {
-          return post1.title.toLowerCase() <= post2.title.toLowerCase()
-            ? -1
-            : 1;
-        });
-      }
+    let posts = await apiCaller({ url: `${BASE_URL}/posts` });
+
+    if (Object.keys(req.query).length === 0)
+      return resp.status(200).json(posts);
+
+    const { title, body, sort } = req.query;
+    if (title || body) {
+      posts = posts.filter(
+        post => post.title.includes(title) || post.body.includes(body)
+      );
     }
-    resp.status(200).json(posts);
+    if (sort) {
+      posts.sort((post1, post2) => {
+        return post1.title.toLowerCase() <= post2.title.toLowerCase() ? -1 : 1;
+      });
+    }
+    return resp.status(200).json(posts);
   } catch (error) {
-    resp.status(404).json({
+    return resp.status(404).json({
       error
     });
   }
 }
 
-export async function deletePosts(req, resp) {
+async function deletePosts(req, resp) {
   try {
-    let posts = await apiCaller({ url: baseUrl });
+    let posts = await apiCaller({ url: BASE_URL });
     const { user } = req.query;
     if (!user) {
-      resp.status(404).json({
-        error: 'Provide a userId to delete posts'
+      return resp.status(400).json({
+        error: 'Bad request. Provide a userId to delete posts'
       });
     }
     posts = posts.filter(post => post.userId !== Number(user));
-    resp.status(200).json(posts);
+    return resp.status(200).json(posts);
   } catch (error) {
-    resp.status(404).json(error);
+    return resp.status(404).json(error);
   }
 }
 
-export async function getCommentsForPost(req, resp) {
+async function getCommentsForPost(req, resp) {
   try {
     const { id } = req.params;
     const result = await apiCaller({
-      url: `https://jsonplaceholder.typicode.com/posts/${id}/comments`
+      url: `${BASE_URL}/posts/${id}/comments`
     });
     resp.status(200).json(result);
   } catch (error) {
-    console.log(error);
     resp.status(404).json(error);
   }
 }
 
-export async function getPostsWithComments(req, resp) {
+async function getPostsWithComments(req, resp) {
   const postsPromise = apiCaller({
-    url: 'https://jsonplaceholder.typicode.com/posts'
+    url: `${BASE_URL}/posts`
   });
   const commentsPromise = apiCaller({
-    url: 'https://jsonplaceholder.typicode.com/comments'
+    url: `${BASE_URL}/comments`
   });
 
   try {
-    const values = await Promise.all([postsPromise, commentsPromise]);
-    const result = values[0].map(post => {
+    const [posts, comments] = await Promise.all([
+      postsPromise,
+      commentsPromise
+    ]);
+    const result = posts.map(post => {
       return {
         ...post,
-        comments: values[1].filter(comment => comment.postId === post.id)
+        comments: comments.filter(comment => comment.postId === post.id)
       };
     });
     resp.status(200).json(result);
   } catch (error) {
-    console.log(error);
     resp.status(404).json(error);
   }
 }
