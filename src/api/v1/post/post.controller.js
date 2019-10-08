@@ -1,8 +1,11 @@
 // @ts-check
-import apiCaller from "../../../apiCaller";
+import apiCaller from '../../../apiCaller';
 
-const baseUrl = "https://jsonplaceholder.typicode.com/posts";
-export async function get(req, resp) {
+// Use hoisting to export all the functions from the same place for readiblity.
+const baseUrl = 'https://jsonplaceholder.typicode.com/posts';
+
+// Use proper and meaningful function names
+export async function getPosts(req, resp) {
   try {
     let posts = await apiCaller({ url: baseUrl });
     if (Object.keys(req.query).length !== 0) {
@@ -26,21 +29,20 @@ export async function get(req, resp) {
     });
   }
 }
+
 export async function deletePosts(req, resp) {
   try {
     let posts = await apiCaller({ url: baseUrl });
     const { user } = req.query;
     if (!user) {
       resp.status(404).json({
-        error: "Provide a userId to delete posts"
+        error: 'Provide a userId to delete posts'
       });
     }
     posts = posts.filter(post => post.userId !== Number(user));
     resp.status(200).json(posts);
   } catch (error) {
-    resp.status(404).json({
-      error
-    });
+    resp.status(404).json(error);
   }
 }
 
@@ -53,31 +55,29 @@ export async function getCommentsForPost(req, resp) {
     resp.status(200).json(result);
   } catch (error) {
     console.log(error);
-    resp.status(404).json({
-      error
-    });
+    resp.status(404).json(error);
   }
 }
 
 export async function getPostsWithComments(req, resp) {
   const postsPromise = apiCaller({
-    url: "https://jsonplaceholder.typicode.com/posts"
+    url: 'https://jsonplaceholder.typicode.com/posts'
   });
   const commentsPromise = apiCaller({
-    url: "https://jsonplaceholder.typicode.com/comments"
+    url: 'https://jsonplaceholder.typicode.com/comments'
   });
-  Promise.all([postsPromise, commentsPromise])
-    .then(values => {
-      const result = values[0].map(post => {
-        return {
-          ...post,
-          comments: values[1].filter(comment => comment.postId === post.id)
-        };
-      });
 
-      resp.status(200).json(result);
-    })
-    .catch(error => {
-      resp.status(404).json(error);
+  try {
+    const values = await Promise.all([postsPromise, commentsPromise]);
+    const result = values[0].map(post => {
+      return {
+        ...post,
+        comments: values[1].filter(comment => comment.postId === post.id)
+      };
     });
+    resp.status(200).json(result);
+  } catch (error) {
+    console.log(error);
+    resp.status(404).json(error);
+  }
 }

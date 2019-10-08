@@ -1,9 +1,9 @@
-//@ts-check
-import { Router } from "express";
-import * as userController from "./user.controller";
+// @ts-check
+import { Router } from 'express';
+import getUsers from './user.controller';
 
 const router = Router();
 
-router.get("/", userController.get);
+router.get('/', getUsers);
 
 export default router;

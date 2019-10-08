@@ -14,6 +14,6 @@ module.exports = {
     sourceType: "module"
   },
   rules: {
-    quotes: ["error", "double"]
+    quotes: ["error", "single"]
   }
 };

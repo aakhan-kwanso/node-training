@@ -1,10 +1,9 @@
-import apiCaller from "../../../apiCaller";
+import apiCaller from '../../../apiCaller';
 
-// eslint-disable-next-line
-export async function get(req, resp) {
+export default async function getComments(req, resp) {
   try {
     const result = await apiCaller({
-      url: "https://jsonplaceholder.typicode.com/comments"
+      url: 'https://jsonplaceholder.typicode.com/comments'
     });
     resp.status(200).json(result);
   } catch (error) {

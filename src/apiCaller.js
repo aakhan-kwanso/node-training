@@ -1,19 +1,19 @@
-//@ts-check
+// @ts-check
+import rpn from 'request-promise-native';
 
-import rpn from "request-promise-native";
-
-function apiCaller({ method = "GET", payload = null, url = "" }) {
+// Change naming convention from payload to params
+function apiCaller({ method = 'GET', params = null, url = '' }) {
   let options = {
     uri: url,
     headers: {
-      "User-Agent": "Request-Promise"
+      'User-Agent': 'Request-Promise'
     },
     json: true
   };
 
   if (method) {
     options = { ...options, method };
-    if (payload) options = { ...options, body: payload };
+    if (params) options = { ...options, body: params };
   }
 
   return rpn(options)
